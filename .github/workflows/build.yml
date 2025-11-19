@@ -28,8 +28,8 @@ jobs:
 
     - uses: actions/checkout@v4
       with:
-        repository: google/bindiff
-        ref: c8972f08a3438049f2f5e81439a70ee56f95c549
+        repository: owl129/bindiff
+        ref: dev
         path: bindiff
 
     - uses: actions/checkout@v4
