@@ -66,6 +66,21 @@ jobs:
         Expand-Archive -Path "idasdk92.zip" -DestinationPath "build\ida\" -Force
         dir build\ida
 
+    # - name: Cache Boost
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+    #     path: boost/boost
+    #     key: boost-${{ matrix.os }}-${{ steps.install-boost.outputs.cache-key }}
+    
+    - name: Cache CMake build (binexport)
+      uses: actions/cache@v4
+      with:
+        path: build/out/_deps/binexport-build
+        key: cmake-binexport-${{ matrix.os }}-${{ hashFiles('binexport/**') }}
+        restore-keys: |
+          cmake-binexport-${{ matrix.os }}-
+
     - name: Enable Developer Command Prompt (Windows)
       if: matrix.os == 'windows-2022'
       uses: ilammy/msvc-dev-cmd@v1.12.1
@@ -82,39 +97,6 @@ jobs:
         platform_version: ${{ matrix.os == 'windows-2022' && '2022' || matrix.os == 'ubuntu-24.04' && '22.04' || matrix.os == 'ubuntu-22.04' && '22.04' || matrix.os == 'macos-14' && '14' || matrix.os == 'macos-13' && '13' }}
         toolset: ${{ matrix.os == 'windows-2022' && 'msvc' || matrix.os == 'ubuntu-24.04' && 'gcc' || matrix.os == 'ubuntu-22.04' && 'gcc' || matrix.os == 'macos-14' && 'clang' || matrix.os == 'macos-13' && 'clang' }}
         arch: ${{ matrix.os != 'macos-14' && 'x86' || matrix.os == 'macos-14' && 'aarch64' }}
-
-    - name: Configure CMake
-      shell: bash
-      env:
-        BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
-      run: |
-        cmake -S bindiff -B build/out -G Ninja \
-          "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" \
-          -DCMAKE_INSTALL_PREFIX=build/out \
-          -DBINDIFF_BINEXPORT_DIR=binexport \
-          "-DIdaSdk_ROOT_DIR=${PWD}/build/ida/src" \
-          -DBoost_INCLUDE_DIR="${{ steps.install-boost.outputs.BOOST_ROOT }}/include" \
-          -DBoost_LIBRARY_DIRS="${{ steps.install-boost.outputs.BOOST_ROOT }}/lib"
-
-    - name: Build
-      working-directory: build/out
-      shell: bash
-      run: cmake --build . --config "${BUILD_TYPE}"
-
-    - name: Test
-      working-directory: build/out
-      shell: bash
-      run: ctest --build-config "${BUILD_TYPE}" --output-on-failure -R '^[A-Z]'
-
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: BinDiff-IDA-${{ env.IDA_VERSION_FOR_ARTIFACT_NAME }}-${{ matrix.os }}
-        path: |
-          build/out/bindiff
-          build/out/bindiff.exe
-          build/out/ida/bindiff*
-          build/out/tools/bindiff*
 
     - name: Configure CMake (binexport)
       shell: bash
