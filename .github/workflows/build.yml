@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
   IDA_VERSION_FOR_ARTIFACT_NAME: "9.2"
 
 jobs:
