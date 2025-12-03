@@ -66,6 +66,15 @@ jobs:
         Expand-Archive -Path "idasdk92.zip" -DestinationPath "build\ida\" -Force
         dir build\ida
 
+    - name: Restore CMake Build Cache
+      uses: actions/cache@v4
+      with:
+        path: build/out 
+        key: ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-${{ env.BUILD_TYPE }}
+        restore-keys: |
+          ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-
+          ${{ runner.os }}-build-cache-
+
     - name: Enable Developer Command Prompt (Windows)
       if: matrix.os == 'windows-2022'
       uses: ilammy/msvc-dev-cmd@v1.12.1
@@ -83,7 +92,7 @@ jobs:
         toolset: ${{ matrix.os == 'windows-2022' && 'msvc' || matrix.os == 'ubuntu-24.04' && 'gcc' || matrix.os == 'ubuntu-22.04' && 'gcc' || matrix.os == 'macos-14' && 'clang' || matrix.os == 'macos-13' && 'clang' }}
         arch: ${{ matrix.os != 'macos-14' && 'x86' || matrix.os == 'macos-14' && 'aarch64' }}
 
-    - name: Configure CMake
+    - name: Configure CMake (bindiff)
       shell: bash
       env:
         BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
