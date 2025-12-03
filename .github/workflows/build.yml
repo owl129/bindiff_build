@@ -66,14 +66,14 @@ jobs:
         Expand-Archive -Path "idasdk92.zip" -DestinationPath "build\ida\" -Force
         dir build\ida
 
-    - name: Restore CMake Build Cache
-      uses: actions/cache@v4
-      with:
-        path: build/out 
-        key: ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-${{ env.BUILD_TYPE }}
-        restore-keys: |
-          ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-
-          ${{ runner.os }}-build-cache-
+    # - name: Restore CMake Build Cache
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: build/out 
+    #     key: ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-${{ env.BUILD_TYPE }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-
+    #       ${{ runner.os }}-build-cache-
 
     - name: Enable Developer Command Prompt (Windows)
       if: matrix.os == 'windows-2022'
