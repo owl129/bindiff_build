@@ -69,7 +69,7 @@ jobs:
     - name: Restore CMake Build Cache
       uses: actions/cache@v4
       with:
-        path: build/out
+        path: build/out/_deps
         key: ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-${{ env.BUILD_TYPE }}
         restore-keys: |
           ${{ runner.os }}-build-cache-${{ hashFiles('bindiff/CMakeLists.txt', 'binexport/CMakeLists.txt') }}-
